@@ -1,0 +1,17 @@
+{
+  "name": "trader",
+  "version": "0.0.1",
+  "description": "Virtual trader interface",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "n3op2",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.16.1",
+    "express": "^4.16.4",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.2"
+  }
+}
