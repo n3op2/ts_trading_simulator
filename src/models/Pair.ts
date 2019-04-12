@@ -1,58 +1,32 @@
 import mongoose from 'mongoose';
 import PairSchema from '../schemas/Pair';
+import Req from '../lib/request';
 import uuidv1 from 'uuid';
 import axios from 'axios';
 
 const pair = mongoose.model('pairs', PairSchema); 
-// const url: string = 'https://www.freeforexapi.com/api/live';
-const url: string = 'https://api.exchangeratesapi.io/latest';
-
-
-/*
-export const Pair = {
-  create: function() {
-    const rate = new pair({
-      uuid: 'uuid',
-      four_hours_now: '4hn',
-    });
-    rate.save((err) => {
-      if (err) return console.log('Erro: ', err);
-      console.log(`saved [${rate}]`);
-    });
-  }
-};
-*/
+const url: string = 'https://www.freeforexapi.com/api/live';
+// const url: string = 'https://api.exchangeratesapi.io/latest';
 
 export interface IPair {
   uuid: string;
 };
 
-const GetData: (url: string, pair: string) => Promise<string> =
-  function(url: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      axios.get(url).then((res) => {
-        return resolve(JSON.stringify(res.data));
-      }).catch((err) => {
-        return reject(err);
-      });;
-    });
-  };
-
 export default class Pair implements IPair {
   private getUrl: string;
   private name: string;
+  private req: Req;
   uuid = uuidv1();
 
   constructor(name: string) {
     this.name = name;
-    // this.getUrl = `${url}?pairs=${name}`;
-    this.getUrl = `${url}`;
+    this.getUrl = `${url}?pairs=${name}`;
+    this.req = new Req(this.getUrl);
   };
 
-  public test = async (cb: (res: string) => void) => {
-    await GetData(this.getUrl, this.name).then(pair => {
-      return cb(pair);
-    }).catch((err) => console.log(err));
+  public init = async () => {
+    const res = await this.req.get().then(res => JSON.parse(res));
+    console.log(res.data);
   };
 
   public create = async (rate: number, fhn: string, cb: (res: boolean) => void) => {
@@ -69,3 +43,4 @@ export default class Pair implements IPair {
     });
   };
 };
+
