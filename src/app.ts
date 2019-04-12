@@ -5,7 +5,7 @@ import Pair from './models/Pair';
 
 const db = new DB('mongodb://127.0.0.1/trader').connect();
 const app = express();
-const EU = new Pair('EURUSD');
+const EU = new Pair('EURUSD', 1000);
 
 EU.init();
 
