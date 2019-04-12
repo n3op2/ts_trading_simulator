@@ -4,7 +4,9 @@ import uuidv1 from 'uuid';
 import axios from 'axios';
 
 const pair = mongoose.model('pairs', PairSchema); 
-const url: string = 'https://www.freeforexapi.com/api/live';
+// const url: string = 'https://www.freeforexapi.com/api/live';
+const url: string = 'https://api.exchangeratesapi.io/latest';
+
 
 /*
 export const Pair = {
@@ -43,7 +45,8 @@ export default class Pair implements IPair {
 
   constructor(name: string) {
     this.name = name;
-    this.getUrl = `${url}?pairs=${name}`;
+    // this.getUrl = `${url}?pairs=${name}`;
+    this.getUrl = `${url}`;
   };
 
   public test = async (cb: (res: string) => void) => {
