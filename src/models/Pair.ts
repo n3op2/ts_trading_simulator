@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import PairSchema from '../schemas/Pair';
 import Req from '../lib/request';
 import uuidv1 from 'uuid';
-import axios from 'axios';
 
 const pair = mongoose.model('pairs', PairSchema); 
 const url: string = 'https://www.freeforexapi.com/api/live';
@@ -13,7 +12,8 @@ type _resData = {
   resTime: string;
   name: string;
   data: any;
-}
+};
+
 type _pairData = {
     rate: number;
     name: string;
@@ -46,6 +46,7 @@ export default class Pair implements IPair {
         put(res);
       }
     }, this.interval);
+
     const put = (res: _resData) => {
       clearInterval(waiter);
       const pair: _pairData = {
@@ -62,7 +63,9 @@ export default class Pair implements IPair {
   private create = async (data: _pairData, cb: (res: boolean) => void) => {
     const _pair = new pair({
       uuid: this.uuid, 
-      rate: data.rate
+      rate: data.rate,
+      pair_name: data.name,
+      date_created: data.timestamp
     });
     await _pair.save((saveErr, saveRes) => {
       if (saveErr) {

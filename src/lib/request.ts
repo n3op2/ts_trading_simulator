@@ -11,7 +11,7 @@ type _options = {
 };
 
 export default class Get {
-  // TOTO: get url from config module
+  // TOTO: get url from config module + constructor suffix
   private options: _options;
   private url: string;
 
@@ -25,11 +25,13 @@ export default class Get {
     };
   };
 
+  private now = (): number => new Date().getTime();
+
   public get = () => new Promise<string>((resolve) => {
     // sends response 'Content-Type': 'text/html';
-    const start: number = new Date().getTime();
+    const start: number = this.now();
     axios.get(this.url, this.options).then(res => { 
-      const end: number = new Date().getTime();
+      const end: number = this.now(); 
       const response: object = {
         status: res.status,
         resTime: `${end - start}ms`,
