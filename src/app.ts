@@ -12,7 +12,7 @@ const br = '-> -> -> \n';
 (async function() {
   const last = await EU.get().then((res: string) => {
     const data: object = JSON.parse(res); 
-    console.log(`db.get[INFO] ${br}`, res.slice(0, 20), '\n');
+    console.log(`db.get[INFO] ${br}`, data, '\n');
     return data;
   });
 
@@ -25,11 +25,17 @@ const br = '-> -> -> \n';
       if (r.status === 200) {
         const name = Object.keys(r.data.rates)[0];
         const pair = { ...{ name }, ...r.data.rates[name] };
-        const { data, timestamp, ...rest } = r;  
-        const Response = { ...rest, pair };
+        const resObj = {
+          status: r.status,
+          resTime: r.resTime,
+          timestamp: new Date().getTime() 
+        };
+        const { data, timestamp, status, resTime, ...rest } = r;  
+        const Response = { ...rest, res: resObj, pair };
+        console.log('\n====================\n', Response, '\n');
         return Response;
       } else {
-        console.log(`db.watch[ERROR] ${br}`, data, '\n');
+        console.log(`db.watch[ERROR] ${br}`, r, '\n');
 
         return 0;
       }
@@ -42,16 +48,14 @@ const br = '-> -> -> \n';
 
     // call recursive function
     if (rate.pair.rate === startRate.pair.rate) {
-      console.log('===');
       await watch(rate);
     } else {
-      console.log('!==');
-      await watch(rate);
       /* TODO Save to db
       EU.create(data: {}, (res => {
         await check(last);
       });
       */
+      console.log('save to db');
     }
     return 'done';
   };
