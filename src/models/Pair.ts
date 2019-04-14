@@ -38,7 +38,7 @@ export default class Pair implements IPair {
     this.req = new Req(this.getUrl);
   };
 
-  public get = () => new Promise<string>((resolve) => {
+  public get = () => new Promise<string>((resolve, reject) => {
     pair.findOne().sort('-date_created').lean().exec((err, pair) => {
       if (err) return resolve(JSON.stringify(err));
       const {_id, ...filtered} = pair;
@@ -46,26 +46,8 @@ export default class Pair implements IPair {
     });
   });
 
-  public watch = (old: { rate: number }) => new Promise<string>((resolve) => {
-    this.req.get().then(res => { 
-      console.log('res: ', res);
-      resolve(res)
-    });
-  /* old
-    const rate = await this.req.get().then(res => { 
-      const data = JSON.parse(res);
-      this.req.get().then(newRes => {
-        const newData = JSON.parse(newRes);
-        console.log('old data: ', data);
-        console.log('net data: ', newData);
-
-        if (data !== newData) {
-          console.log('changed...');
-          return data;
-        } 
-      });
-    });
-  */
+  public watch = () => new Promise<string>((resolve, reject) => {
+    this.req.get().then(res => resolve(res)).catch(err => reject(err));
   });
 
   public create = (data: _pairData, cb: (res: boolean) => void) => {
