@@ -38,36 +38,45 @@ export default class Pair implements IPair {
     this.req = new Req(this.getUrl);
   };
 
-  public init = () => {
-    const waiter = setInterval(async () => {
-      const res = await this.req.get().then(res => JSON.parse(res));
-      console.log(res);
-      if (res) {
-        put(res);
-      }
-    }, this.interval);
+  public get = () => new Promise<string>((resolve) => {
+    pair.findOne().sort('-date_created').lean().exec((err, pair) => {
+      if (err) return resolve(JSON.stringify(err));
+      const {_id, ...filtered} = pair;
+      resolve(JSON.stringify(filtered));
+    });
+  });
 
-    const put = (res: _resData) => {
-      clearInterval(waiter);
-      const pair: _pairData = {
-        rate: res.data.rates[this.name].rate,
-        name: res.name,
-        timestamp: new Date().getTime()
-      };
-      this.create(pair, (res: boolean) => {
-        console.log(res);
+  public watch = (old: { rate: number }) => new Promise<string>((resolve) => {
+    this.req.get().then(res => { 
+      console.log('res: ', res);
+      resolve(res)
+    });
+  /* old
+    const rate = await this.req.get().then(res => { 
+      const data = JSON.parse(res);
+      this.req.get().then(newRes => {
+        const newData = JSON.parse(newRes);
+        console.log('old data: ', data);
+        console.log('net data: ', newData);
+
+        if (data !== newData) {
+          console.log('changed...');
+          return data;
+        } 
       });
-    };
-  };
+    });
+  */
+  });
 
-  private create = async (data: _pairData, cb: (res: boolean) => void) => {
-    const _pair = new pair({
+  public create = (data: _pairData, cb: (res: boolean) => void) => {
+    const newPair = new pair({
       uuid: this.uuid, 
       rate: data.rate,
       pair_name: data.name,
       date_created: data.timestamp
     });
-    await _pair.save((saveErr, saveRes) => {
+
+    newPair.save((saveErr, saveRes) => {
       if (saveErr) {
         console.log('Error: ', saveErr);
         return cb(false);
