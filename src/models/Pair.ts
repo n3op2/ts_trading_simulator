@@ -50,7 +50,8 @@ export default class Pair implements IPair {
     this.req.get().then(res => resolve(res)).catch(err => reject(err));
   });
 
-  public create = (data: _pairData, cb: (res: boolean) => void) => {
+  /* TODO below
+  private create = (data: _pairData, cb: (res: boolean) => void) => {
     const newPair = new pair({
       uuid: this.uuid, 
       rate: data.rate,
@@ -67,5 +68,6 @@ export default class Pair implements IPair {
       cb(true);
     });
   };
+  */
 };
 

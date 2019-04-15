@@ -38,8 +38,9 @@ export default class Get {
       const response: object = {
         uuid: this.uuid, 
         status: res.status,
-        resTime: `${end - start}ms`,
+        time: (end - start),
         timestamp: new Date().getTime(),
+        headers: res.headers,
         data: res.data
       };
       resolve(JSON.stringify(response));
