@@ -39,7 +39,7 @@ export default class Pair implements IPair {
   };
 
   public get = () => new Promise<string>((resolve, reject) => {
-    pair.findOne().sort('-date_created').lean().exec((err, pair) => {
+    pair.findOne().sort('-timestamp').lean().exec((err, pair) => {
       if (err) return resolve(JSON.stringify(err));
       const {_id, ...filtered} = pair;
       resolve(JSON.stringify(filtered));
