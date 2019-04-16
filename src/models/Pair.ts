@@ -43,6 +43,7 @@ export default class Pair implements IPair {
   public get = () => new Promise<string>((resolve, reject) => {
     m_pair.findOne().sort('-date_created').lean().exec((err, pair) => {
       if (err) return resolve(JSON.stringify(err));
+      console.log('foud one -> ', pair);
       const {_id, ...filtered} = pair;
       resolve(JSON.stringify(filtered));
     });
@@ -55,8 +56,13 @@ export default class Pair implements IPair {
   public save = (data: _pairData, lastPair: _pairData) => new Promise<boolean>(resolve => {
     // TODO type
     console.log(`saving...[${data.name}]`);
+
+    this.get().then((r: any) => {
+    // TODO error and etc... 
+    const uuid: string = JSON.parse(r).uuid;
+    console.log('a?', r, uuid);
     const pair = new m_pair({
-      uuid: this.uuid,
+      uuid: uuid ? uuid : this.uuid,
       pair: data,
       date_updated: lastPair.timestamp,
       date_created: this.now()
@@ -67,6 +73,8 @@ export default class Pair implements IPair {
       console.log(`[${data.name}]...saved`);
       resolve(true);
     });
+
+    }); 
   });
 };
 
