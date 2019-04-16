@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
-import PairSchema from '../schemas/Pair';
+import m_pair from '../schemas/Pair';
 import Req from '../lib/request';
 import uuidv1 from 'uuid';
 
-const pair = mongoose.model('pairs', PairSchema); 
 const url: string = 'https://www.freeforexapi.com/api/live';
 // const url: string = 'https://api.exchangeratesapi.io/latest';
 
@@ -15,9 +14,10 @@ type _resData = {
 };
 
 type _pairData = {
-    rate: number;
     name: string;
+    rate: number;
     timestamp: number;
+    time: number; 
 };
 
 export interface IPair {
@@ -38,8 +38,10 @@ export default class Pair implements IPair {
     this.req = new Req(this.getUrl);
   };
 
+  private now = () => new Date().getTime();
+
   public get = () => new Promise<string>((resolve, reject) => {
-    pair.findOne().sort('-timestamp').lean().exec((err, pair) => {
+    m_pair.findOne().sort('-date_created').lean().exec((err, pair) => {
       if (err) return resolve(JSON.stringify(err));
       const {_id, ...filtered} = pair;
       resolve(JSON.stringify(filtered));
@@ -50,24 +52,19 @@ export default class Pair implements IPair {
     this.req.get().then(res => resolve(res)).catch(err => reject(err));
   });
 
-  /* TODO below
-  private create = (data: _pairData, cb: (res: boolean) => void) => {
-    const newPair = new pair({
-      uuid: this.uuid, 
-      rate: data.rate,
-      pair_name: data.name,
-      date_created: data.timestamp
+  public save = (data: _pairData, lastPair: _pairData) => new Promise<boolean>(resolve => {
+    // TODO type
+    const pair = new m_pair({
+      uuid: this.uuid,
+      pair: data,
+      date_updated: lastPair.timestamp,
+      date_created: this.now()
     });
-
-    newPair.save((saveErr, saveRes) => {
-      if (saveErr) {
-        console.log('Error: ', saveErr);
-        return cb(false);
-      }
-      console.log('Info: ', saveRes);
-      cb(true);
+    pair.save((saveErr, saveRes) => {
+      // TODO logger...
+      if (saveErr) return resolve(false);
+      resolve(true);
     });
-  };
-  */
+  });
 };
 

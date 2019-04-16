@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export default new Schema({
+const pairSchema = new Schema({
   uuid: {
     type: String,
     required: [ true, 'uuid must be provided' ]
@@ -21,11 +21,20 @@ export default new Schema({
       required: [ true, '1970/01/01' ]
     },
     time: {
-      type: String
+      type: Number,
+      required: [ true, 'latency time missing' ]
     }
   },
-  four_hours_now: String,
-  rate: Number,
-  date_created: Number,
-  date_last_four: Number,
+  date_updated: {
+    type: Number
+  },
+  date_created: {
+    type: Number,
+    default: new Date().getTime()
+  }
 });
+
+const Pair = mongoose.model('pairs', pairSchema);
+
+export default Pair;
+
