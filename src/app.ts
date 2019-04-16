@@ -45,10 +45,6 @@ const t_pair = {
 };
 
 (async function() {
-
-  // TODO remove
-  var oldRate: _rate;
-
   // TODO Controllers
   const getLast = () => EU.get().then(r => JSON.parse(r));
  
@@ -60,45 +56,42 @@ const t_pair = {
 
 
   // recursive
-  const watch = async (oldPair: any) => {
+  const watch = async (oldPair: _pair) => {
     const now: number = await getNow().then(s => s);
-    const newPair: any = await EU.watch().then((res: string) => {
+    const newPair: _pair = await EU.watch().then((res: string) => {
       const r = JSON.parse(res); 
 
       if (r.status === 200) {
         const name: string = Object.keys(r.data.rates)[0];
-        const time = r.time;
+        const time: number = r.time;
         const pair: _pair = { name, ...r.data.rates[name], time };
-        console.log(r.time);
+
         return pair; 
       }
-
       console.log(`watch[ERROR] ${br}`, newPair, '\n');
 
-      return 0;
+      return oldPair;
+
     }).catch((err: string) => {
       const data = JSON.parse(err);
       console.log(`watch[ERROR] ${br}`, newPair, '\n');
 
-      return 0;
+      return oldPair;
     });
 
-    // call recursive function
     if (!newPair) {
-      console.log(`${newPair.name} -> dead...`);
-      return 0;
+      console.log(`${oldPair.name} -> dead...`);
+      return oldPair;
     }
 
     console.log('old rate: ', newPair.rate);
     console.log('new rate: ', oldPair.rate);
     
-    
     if (newPair.rate === oldPair.rate) {
-      console.log('waiting for change...');
       await watch(newPair);
     } else {
+      // :)
       await EU.save(newPair, oldPair);
-      console.log('snoozing...')
       await new Promise<number>(resolve => setTimeout(resolve, 2000));
       await watch(newPair);
     }

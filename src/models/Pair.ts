@@ -54,6 +54,7 @@ export default class Pair implements IPair {
 
   public save = (data: _pairData, lastPair: _pairData) => new Promise<boolean>(resolve => {
     // TODO type
+    console.log(`saving...[${data.name}]`);
     const pair = new m_pair({
       uuid: this.uuid,
       pair: data,
@@ -63,6 +64,7 @@ export default class Pair implements IPair {
     pair.save((saveErr, saveRes) => {
       // TODO logger...
       if (saveErr) return resolve(false);
+      console.log(`[${data.name}]...saved`);
       resolve(true);
     });
   });
