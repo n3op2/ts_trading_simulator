@@ -26,7 +26,8 @@ const pairSchema = new Schema({
     }
   },
   date_updated: {
-    type: Number
+    type: Number,
+    require: [ true, 'last updated...' ]
   },
   date_created: {
     type: Number,
