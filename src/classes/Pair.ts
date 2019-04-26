@@ -1,6 +1,9 @@
 import m_pair from '../models/Pair';
 import Req from '../lib/request';
 import uuidv1 from 'uuid';
+import Line from './Line';
+
+console.log('---------------> ', new Line());
 
 const url: string = 'https://www.freeforexapi.com/api/live';
 // const url: string = 'https://api.exchangeratesapi.io/latest';

@@ -11,12 +11,18 @@ type _config = {
 
 export default class Line {
   uuid: string;
+  /*
   pair_uuid: string;
   stop_loss: number;
   test1: number;
   test2: number;
   rate: number;
+  */
 
+  constructor() {
+    this.uuid = uuidv1();
+  }
+  /*
   constructor(config: _config) {
     this.uuid = uuidv1();
     this.pair_uuid = config.pair_uuid;
@@ -25,6 +31,7 @@ export default class Line {
     this.test1 = config.test1;
     this.test2 = config.test2;
   };
+  */
 
   private pipsToRate = (pips: number, rate: number): number => pips / 10000 + rate;
 
@@ -32,6 +39,13 @@ export default class Line {
     m_line.findOne({ uuid: uuid }).exec((err: string, line: any) => {
       if (err) return resolve(JSON.stringify(err));
       resolve(line);
+    });
+  });
+
+  public getLines = (uuid: string) => new Promise<string>((resolve) => {
+    m_line.find({ uuid }).exec((err: string, lines: any) => {
+      if (err) return resolve(JSON.stringify(err));
+      resolve(lines);
     });
   });
 
@@ -61,6 +75,7 @@ export default class Line {
   });
 
   // TODO any, general types for pairs/lines
+  /*
   public work = (pair: any, lineUuid: string) => new Promise<boolean>(resolve => {
     console.log('hi my name is line', pair);
     console.log('line.work()', pair);
@@ -78,5 +93,6 @@ export default class Line {
       resolve(false);
     }).catch(() => resolve(false));
   });
+  */
 };
 
