@@ -7,6 +7,17 @@ new DB('mongodb://127.0.0.1/trader').connect();
 // TODO get from config
 const EURUSD = 'EURUSD';
 
+// test pair 
+const t_pair = {
+  uuid: '90ef270f-1710-41ab-ad60-0737aa873306',
+  pair: {
+    name: 'EURUSD',
+    rate: 1.30499,
+    time: 3374,
+    timestamp: 1555443116131
+  },
+  date_updated: 1555443016131
+};
 // Test line
 const line = {
   uuid: uuidv1(),
@@ -14,7 +25,8 @@ const line = {
   line_rate: 1.12245,
   stop_loss: 17, 
   risk: 2.5
-} 
+}; 
+const br = '-> -> -> \n';
 
 const line1Config = {
   pair_uuid: '',  
@@ -26,19 +38,13 @@ const line1Config = {
   bid: 'buy'
 }
 
-const myLine1 = new Line(line1Config);
-
-myLine1.save(line);
-const EU = new Pair(EURUSD, 1000);
-
-const br = '-> -> -> \n';
-
 // TODO Types!
 type _res = {
   status: number,
   time: string,
   timestamp: number, 
 };
+
 
 type _pair = {
   uuid: string,
@@ -57,30 +63,27 @@ const getNow = async (): Promise<number> => new Promise(resolve => {
   resolve(new Date().getTime());
 });
 
-// test pair 
-const t_pair = {
-  uuid: '90ef270f-1710-41ab-ad60-0737aa873306',
-  pair: {
-    name: 'EURUSD',
-    rate: 1.30499,
-    time: 3374,
-    timestamp: 1555443116131
-  },
-  date_updated: 1555443016131
-};
+// const myLine1 = new Line(line1Config);
+//myLine1.save(line);
+const EU = new Pair(EURUSD, 1000);
 
 (async function() {
+  EU.init();
+}());
+
+
+
+  // recursive
+  /*
   // TODO Controllers
-  const getLast = () => EU.get(EURUSD).then(r => JSON.parse(r));
-  const last = await EU.get(EURUSD).then((res: string) => {
+  const getLast = () => EU.get().then(r => JSON.parse(r));
+ 
+  const last = await EU.get().then((res: string) => {
     const data = JSON.parse(res); 
     console.log(`db.get[INFO] ${br}`, data, '\n');
     return data;
   });
 
-  EU.init();
-  // recursive
-  /*
   const watch = async (oldPair: _pair) => {
     const now: number = await getNow().then(s => s);
     const newPair: _pair = await EU.watch().then((res: string) => {
@@ -97,10 +100,10 @@ const t_pair = {
       console.log(`watch[ERROR] ${br}`, newPair, '\n');
 
       return oldPair;
+
     }).catch((err: string) => {
       const data = JSON.parse(err);
       console.log(`watch[ERROR] ${br}`, oldPair, '\n');
-
       return oldPair;
     });
 
@@ -133,9 +136,5 @@ const t_pair = {
   // run...
   const pair = last.pair
   const reqPairObject = { uuid: last.uuid, ...pair };
-  // await watch(reqPairObject);
+  await watch(reqPairObject);
   */
-}());
-
-
-

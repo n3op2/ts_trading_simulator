@@ -51,7 +51,8 @@ export default class Line {
       sell,
       actions: 'buy'
     };
-    console.log('new data: ', data);
+
+    console.log('Line[save()]: ', data);
     const line = new m_line(data);
     line.save((err, res) => {
       if (err) return resolve(false);
