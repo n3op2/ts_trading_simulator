@@ -28,6 +28,7 @@ export default class Get {
     };
   };
 
+  // Get time (now) in unix
   private now = (): number => new Date().getTime();
 
   public get = () => new Promise<string>((resolve, reject) => {
